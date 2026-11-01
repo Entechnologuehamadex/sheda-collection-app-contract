@@ -221,7 +221,10 @@ impl Vault {
                 self.unclaimed.insert(&to, &restored);
             }
         }
-        env::log_str(&format!("payout of {} to {} failed and was restored", amount, to));
+        env::log_str(&format!(
+            "payout of {} to {} failed and was restored",
+            amount, to
+        ));
         false
     }
 }
