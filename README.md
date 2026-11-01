@@ -1,7 +1,8 @@
-# Sheda Collection Vault
+# Sheda Collection Contracts
 
-A vault that owns one property unit on behalf of many people, and splits its
-rent among them.
+The contracts behind property raises on Sheda: a vault that owns one unit on
+behalf of many people and splits its rent among them, and the stake registry
+that backs a builder's promises.
 
 This is stage 1 and 2 of [the build spec][spec]: custody, shares, income, and
 the plug-in to the rental marketplace that already exists. The raise, the
@@ -91,6 +92,15 @@ Two details that matter:
 
 ## What is in here
 
+A cargo workspace. Each contract deploys on its own account.
+
+| Crate | Holds |
+| --- | --- |
+| `contracts/vault` | One unit, its shares, and its rent |
+| `contracts/stake-registry` | Builder and manager stake, per profile |
+
+Inside the vault:
+
 | File | Holds |
 | --- | --- |
 | `lib.rs` | State, initialisation, governance, views |
@@ -98,8 +108,27 @@ Two details that matter:
 | `income.rs` | Accumulator, `sync_income`, `claim`, fees, reserve |
 | `custody.rs` | Taking the unit in, and redemption |
 | `market.rs` | Manager instructions forwarded to the marketplace |
-| `ext.rs` | The three contracts this one talks to |
+| `ext.rs` | The contracts this one talks to |
 | `tests.rs` | The arithmetic that decides who gets paid what |
+
+## The stake registry
+
+Stake belongs to a profile, not to a deal, so a builder who abandons one
+project finds it harder to raise for the next.
+
+The accounting is the point. A builder with ₦10m staked who opens three
+raises, each advertising 18% cover, has promised the same ₦10m three times —
+and every investor sees a figure that is only true if the other two succeed.
+So a balance is **total**, **allocated** and **free**, and a raise cannot
+advertise cover the free balance does not support.
+
+Each allocation is ring-fenced to its own project. A slash reaches only that
+project's share, because otherwise one failure drains the cover out from
+under investors in a different project who did nothing wrong.
+
+Cover is reported from the contract as basis points of a target rather than
+computed in the app, so the figure on a project card is the figure the chain
+would actually pay.
 
 ### Methods
 
@@ -120,7 +149,7 @@ Two details that matter:
 
 - `list_for_rent(price, lease_duration_days)`, `delist()`
 - `accept_bid(bid_id)`, `reject_bid(bid_id)`
-- `release_documents(bid_id, uri, description)`
+- `release_documents(bid_id, uri, description)` — forwards to the marketplace's `confirm_document_release`
 - `draw_reserve(amount, to, reason)`
 - `withdraw_manager_fee()`
 
@@ -149,9 +178,9 @@ Two details that matter:
 ## Testing
 
 ```bash
-cargo test --lib          # the arithmetic
+cargo test --workspace --lib
 cargo clippy --all-targets -- -D warnings
-cargo build --target wasm32-unknown-unknown --release
+cargo build --workspace --target wasm32-unknown-unknown --release
 ```
 
 CI runs all three on every push. The unit tests cover the risk-register rows
@@ -167,8 +196,7 @@ marketplace.
 
 ## Not here yet
 
-Raise and escrow, the builder stake and completion guarantee, governance and
-voting, and the share market. They are stages 3 to 6 of the spec. This
+Raise and escrow, governance and voting, and the share market. They are stages 3 to 6 of the spec. This
 contract is deliberately the piece that can be proven first, because the
 integration claim it rests on is the one that would force a redesign if it
 turned out to be wrong.
