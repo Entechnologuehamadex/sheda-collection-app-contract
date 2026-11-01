@@ -128,7 +128,9 @@ impl StakeRegistry {
         let who: AccountId = if msg.trim().is_empty() {
             sender_id
         } else {
-            msg.trim().parse().unwrap_or_else(|_| env::panic_str("That is not an account id"))
+            msg.trim()
+                .parse()
+                .unwrap_or_else(|_| env::panic_str("That is not an account id"))
         };
 
         let mut profile = self.profile_of(&who);
@@ -185,7 +187,10 @@ impl StakeRegistry {
         profile.total += amount.0;
         self.profiles.insert(&who, &profile);
         self.total_held += amount.0;
-        env::log_str(&format!("withdrawal of {} by {} failed and was restored", amount.0, who));
+        env::log_str(&format!(
+            "withdrawal of {} by {} failed and was restored",
+            amount.0, who
+        ));
         false
     }
 
@@ -213,7 +218,10 @@ impl StakeRegistry {
         profile.allocated += amount;
         self.profiles.insert(&who, &profile);
         self.allocations.insert(&key, &amount);
-        env::log_str(&format!("stake_allocated {} by {} to {}", amount, who, project_id));
+        env::log_str(&format!(
+            "stake_allocated {} by {} to {}",
+            amount, who, project_id
+        ));
     }
 
     /// Give the allocation back when a project finishes or is wound up.
@@ -229,7 +237,10 @@ impl StakeRegistry {
         self.profiles.insert(&who, &profile);
         self.allocations.remove(&key);
 
-        env::log_str(&format!("stake_released {} to {} from {}", amount, who, project_id));
+        env::log_str(&format!(
+            "stake_released {} to {} from {}",
+            amount, who, project_id
+        ));
         U128(amount)
     }
 
@@ -238,7 +249,13 @@ impl StakeRegistry {
     /// Only ever out of this project's own allocation. The cap is not a
     /// safety margin — it is the whole mechanism by which one project's
     /// failure cannot reach cover promised to investors in another.
-    pub fn slash(&mut self, project_id: String, who: AccountId, amount: U128, to: AccountId) -> Promise {
+    pub fn slash(
+        &mut self,
+        project_id: String,
+        who: AccountId,
+        amount: U128,
+        to: AccountId,
+    ) -> Promise {
         self.assert_controller();
         let key = Self::key(&project_id, &who);
         let allocated = self.allocations.get(&key).unwrap_or(0);
@@ -265,7 +282,10 @@ impl StakeRegistry {
         }
         self.total_held -= amount;
 
-        env::log_str(&format!("stake_slashed {} from {} on {}", amount, who, project_id));
+        env::log_str(&format!(
+            "stake_slashed {} from {} on {}",
+            amount, who, project_id
+        ));
         ext_ft::ext(self.stablecoin.clone())
             .with_attached_deposit(ONE_YOCTO)
             .with_static_gas(GAS_FOR_FT_TRANSFER)
@@ -295,7 +315,11 @@ impl StakeRegistry {
     }
 
     pub fn get_allocation(&self, project_id: String, account_id: AccountId) -> U128 {
-        U128(self.allocations.get(&Self::key(&project_id, &account_id)).unwrap_or(0))
+        U128(
+            self.allocations
+                .get(&Self::key(&project_id, &account_id))
+                .unwrap_or(0),
+        )
     }
 
     /// Cover as a proportion of a target, in basis points.
@@ -307,7 +331,10 @@ impl StakeRegistry {
         if target.0 == 0 {
             return 0;
         }
-        let allocated = self.allocations.get(&Self::key(&project_id, &account_id)).unwrap_or(0);
+        let allocated = self
+            .allocations
+            .get(&Self::key(&project_id, &account_id))
+            .unwrap_or(0);
         ((allocated * 10_000) / target.0).min(10_000) as u32
     }
 

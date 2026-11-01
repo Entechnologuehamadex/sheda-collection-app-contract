@@ -20,7 +20,11 @@ fn ctx(predecessor: &str, deposit: u128) {
 
 fn registry() -> StakeRegistry {
     ctx("owner.testnet", 0);
-    StakeRegistry::new(acc("usdt.testnet"), acc("projects.testnet"), acc("owner.testnet"))
+    StakeRegistry::new(
+        acc("usdt.testnet"),
+        acc("projects.testnet"),
+        acc("owner.testnet"),
+    )
 }
 
 /// Stake arrives through the stablecoin, so deposits are made as that account.
@@ -50,7 +54,10 @@ fn allocating_moves_stake_out_of_reach() {
 
     let p = reg.get_profile(acc("builder.testnet"));
     assert_eq!(p.allocated.0, 6_000_000);
-    assert_eq!(p.free.0, 4_000_000, "only what is left may back the next raise");
+    assert_eq!(
+        p.free.0, 4_000_000,
+        "only what is left may back the next raise"
+    );
 }
 
 #[test]
@@ -77,8 +84,14 @@ fn a_second_raise_fits_inside_what_is_left() {
 
     let p = reg.get_profile(acc("builder.testnet"));
     assert_eq!(p.free.0, 0);
-    assert_eq!(reg.get_allocation("m120".into(), acc("builder.testnet")).0, 6_000_000);
-    assert_eq!(reg.get_allocation("yaba".into(), acc("builder.testnet")).0, 4_000_000);
+    assert_eq!(
+        reg.get_allocation("m120".into(), acc("builder.testnet")).0,
+        6_000_000
+    );
+    assert_eq!(
+        reg.get_allocation("yaba".into(), acc("builder.testnet")).0,
+        4_000_000
+    );
 }
 
 #[test]
@@ -92,9 +105,17 @@ fn slashing_one_project_leaves_the_other_untouched() {
     reg.allocate("m120".into(), acc("builder.testnet"), U128(6_000_000));
     reg.allocate("yaba".into(), acc("builder.testnet"), U128(4_000_000));
 
-    reg.slash("m120".into(), acc("builder.testnet"), U128(6_000_000), acc("holders.testnet"));
+    reg.slash(
+        "m120".into(),
+        acc("builder.testnet"),
+        U128(6_000_000),
+        acc("holders.testnet"),
+    );
 
-    assert_eq!(reg.get_allocation("m120".into(), acc("builder.testnet")).0, 0);
+    assert_eq!(
+        reg.get_allocation("m120".into(), acc("builder.testnet")).0,
+        0
+    );
     assert_eq!(
         reg.get_allocation("yaba".into(), acc("builder.testnet")).0,
         4_000_000,
@@ -116,7 +137,12 @@ fn a_project_cannot_slash_more_than_it_was_given() {
     reg.allocate("m120".into(), acc("builder.testnet"), U128(6_000_000));
     reg.allocate("yaba".into(), acc("builder.testnet"), U128(4_000_000));
 
-    reg.slash("m120".into(), acc("builder.testnet"), U128(6_000_001), acc("holders.testnet"));
+    reg.slash(
+        "m120".into(),
+        acc("builder.testnet"),
+        U128(6_000_001),
+        acc("holders.testnet"),
+    );
 }
 
 #[test]
@@ -179,7 +205,10 @@ fn cover_never_reads_above_full() {
     deposit(&mut reg, "builder.testnet", 20_000_000);
     ctx("projects.testnet", 0);
     reg.allocate("small".into(), acc("builder.testnet"), U128(20_000_000));
-    assert_eq!(reg.cover_bps("small".into(), acc("builder.testnet"), U128(1_000_000)), 10_000);
+    assert_eq!(
+        reg.cover_bps("small".into(), acc("builder.testnet"), U128(1_000_000)),
+        10_000
+    );
 }
 
 #[test]
