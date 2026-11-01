@@ -1,0 +1,15 @@
+[package]
+name = "sheda-collection-vault"
+description = "Fractional ownership of one property unit, with rent split among its holders."
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+near-sdk.workspace = true
+
+[dev-dependencies]
+near-sdk = { workspace = true, features = ["unit-testing"] }

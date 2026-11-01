@@ -1,0 +1,15 @@
+[package]
+name = "sheda-stake-registry"
+description = "Builder and manager stake, held per profile and allocated per project."
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+near-sdk.workspace = true
+
+[dev-dependencies]
+near-sdk = { workspace = true, features = ["unit-testing"] }

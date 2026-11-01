@@ -37,10 +37,10 @@ jobs:
       # The arithmetic that decides who gets paid what. These run on the host,
       # not in a sandbox, so they are the fast feedback loop.
       - name: Unit tests
-        run: cargo test --lib -- --nocapture
+        run: cargo test --workspace --lib -- --nocapture
 
       - name: Build wasm
-        run: cargo build --target wasm32-unknown-unknown --release
+        run: cargo build --workspace --target wasm32-unknown-unknown --release
 
       - name: Report size
         run: ls -lh target/wasm32-unknown-unknown/release/*.wasm
