@@ -30,7 +30,7 @@ fn registry() -> StakeRegistry {
 /// Stake arrives through the stablecoin, so deposits are made as that account.
 fn deposit(reg: &mut StakeRegistry, who: &str, amount: u128) {
     ctx("usdt.testnet", 0);
-    reg.ft_on_transfer(acc(who), U128(amount), who.to_string());
+    let _ = reg.ft_on_transfer(acc(who), U128(amount), who.to_string());
 }
 
 #[test]
@@ -105,7 +105,7 @@ fn slashing_one_project_leaves_the_other_untouched() {
     reg.allocate("m120".into(), acc("builder.testnet"), U128(6_000_000));
     reg.allocate("yaba".into(), acc("builder.testnet"), U128(4_000_000));
 
-    reg.slash(
+    let _ = reg.slash(
         "m120".into(),
         acc("builder.testnet"),
         U128(6_000_000),
@@ -137,7 +137,7 @@ fn a_project_cannot_slash_more_than_it_was_given() {
     reg.allocate("m120".into(), acc("builder.testnet"), U128(6_000_000));
     reg.allocate("yaba".into(), acc("builder.testnet"), U128(4_000_000));
 
-    reg.slash(
+    let _ = reg.slash(
         "m120".into(),
         acc("builder.testnet"),
         U128(6_000_001),
@@ -156,7 +156,7 @@ fn allocated_stake_cannot_be_withdrawn() {
     reg.allocate("m120".into(), acc("builder.testnet"), U128(6_000_000));
 
     ctx("builder.testnet", 1);
-    reg.withdraw(U128(5_000_000));
+    let _ = reg.withdraw(U128(5_000_000));
 }
 
 #[test]
@@ -167,7 +167,7 @@ fn free_stake_can_be_withdrawn() {
     reg.allocate("m120".into(), acc("builder.testnet"), U128(6_000_000));
 
     ctx("builder.testnet", 1);
-    reg.withdraw(U128(4_000_000));
+    let _ = reg.withdraw(U128(4_000_000));
 
     // The balance drops when the withdrawal is sent; the callback restores
     // it if the transfer fails.
@@ -225,5 +225,5 @@ fn nobody_else_can_allocate() {
 fn stake_cannot_arrive_in_some_other_token() {
     let mut reg = registry();
     ctx("fake-usdt.testnet", 0);
-    reg.ft_on_transfer(acc("builder.testnet"), U128(1_000_000), String::new());
+    let _ = reg.ft_on_transfer(acc("builder.testnet"), U128(1_000_000), String::new());
 }
