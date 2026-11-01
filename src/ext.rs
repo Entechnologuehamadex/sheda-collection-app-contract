@@ -35,6 +35,16 @@ pub trait NonFungibleToken {
 /// The vault owns the property, so it is the account the marketplace expects
 /// these calls from. The manager asks the vault; the vault asks the
 /// marketplace. Nothing in the marketplace changes to allow it.
+///
+/// Every signature below is transcribed from the deployed contract's own ABI,
+/// read off `market.shedauser.testnet` rather than from memory. That mattered:
+/// `update_listing` takes a fifth argument this originally omitted, and the
+/// document call is named `confirm_document_release`, not `release_documents`.
+/// Both would have compiled perfectly and failed at runtime — the first on
+/// deserialisation, the second on a method that does not exist.
+///
+/// If the marketplace is ever redeployed, re-read the ABI before trusting
+/// this file.
 #[ext_contract(ext_market)]
 pub trait Marketplace {
     fn update_listing(
@@ -43,11 +53,12 @@ pub trait Marketplace {
         price: String,
         is_for_sale: bool,
         lease_duration_days: Option<u32>,
+        damage_deposit_required: Option<String>,
     );
     fn delist_property(&mut self, property_id: u64);
     fn accept_bid(&mut self, bid_id: u64, property_id: u64);
     fn reject_bid(&mut self, bid_id: u64, property_id: u64);
-    fn release_documents(
+    fn confirm_document_release(
         &mut self,
         bid_id: u64,
         property_id: u64,

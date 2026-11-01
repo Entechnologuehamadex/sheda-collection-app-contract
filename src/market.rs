@@ -26,15 +26,25 @@ impl Vault {
     }
 
     /// Put the unit on the market, or change its terms.
+    ///
+    /// `is_for_sale` is false without exception. Selling the unit ends the
+    /// investment for every holder, so it goes through governance and its
+    /// 75% threshold — never through the manager, whose mandate is to let
+    /// the flat, not to dispose of it.
     #[payable]
-    pub fn list_for_rent(&mut self, price: U128, lease_duration_days: u32) -> Promise {
+    pub fn list_for_rent(
+        &mut self,
+        price: U128,
+        lease_duration_days: u32,
+        damage_deposit: Option<U128>,
+    ) -> Promise {
         Self::assert_one_yocto();
         self.assert_manager();
         self.assert_holding();
         require!(lease_duration_days > 0, "A lease needs a length");
 
         env::log_str(&format!(
-            "listing unit {} for rent at {} for {} days",
+            "listing unit {} at {} for {} days",
             self.property_id, price.0, lease_duration_days
         ));
         ext_market::ext(self.marketplace.clone())
@@ -45,6 +55,7 @@ impl Vault {
                 price.0.to_string(),
                 false,
                 Some(lease_duration_days),
+                damage_deposit.map(|d| d.0.to_string()),
             )
     }
 
@@ -89,6 +100,10 @@ impl Vault {
     }
 
     /// Hand over the tenancy agreement once the viewing has happened.
+    ///
+    /// Named `confirm_document_release` on the marketplace. Kept under a
+    /// plainer name here because the manager is releasing documents, not
+    /// confirming someone else's release.
     #[payable]
     pub fn release_documents(
         &mut self,
@@ -99,10 +114,14 @@ impl Vault {
         Self::assert_one_yocto();
         self.assert_manager();
         self.assert_holding();
+        require!(
+            !document_image_uri.trim().is_empty(),
+            "A tenancy agreement needs a document"
+        );
         ext_market::ext(self.marketplace.clone())
             .with_attached_deposit(ONE_YOCTO)
             .with_static_gas(GAS_FOR_MARKET_CALL)
-            .release_documents(
+            .confirm_document_release(
                 bid_id.0 as u64,
                 self.property_id,
                 document_image_uri,
