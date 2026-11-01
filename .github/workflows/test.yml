@@ -1,0 +1,46 @@
+name: Build and test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Declaring any permissions block zeroes every permission not listed, so the
+# read on contents has to be spelled out even though it is the only one.
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup target add wasm32-unknown-unknown
+          rustup component add rustfmt clippy
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Formatting
+        run: cargo fmt --all -- --check
+
+      - name: Lint
+        run: cargo clippy --all-targets -- -D warnings
+
+      # The arithmetic that decides who gets paid what. These run on the host,
+      # not in a sandbox, so they are the fast feedback loop.
+      - name: Unit tests
+        run: cargo test --lib -- --nocapture
+
+      - name: Build wasm
+        run: cargo build --target wasm32-unknown-unknown --release
+
+      - name: Report size
+        run: ls -lh target/wasm32-unknown-unknown/release/*.wasm

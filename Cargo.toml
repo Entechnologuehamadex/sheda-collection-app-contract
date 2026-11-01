@@ -1,0 +1,23 @@
+[package]
+name = "sheda-collection-vault"
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/Entechnologuehamadex/sheda-collection-app-contract"
+description = "Fractional ownership of a single property unit, with rent split among its holders."
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+near-sdk = "5.5.0"
+
+[dev-dependencies]
+near-sdk = { version = "5.5.0", features = ["unit-testing"] }
+
+[profile.release]
+codegen-units = 1
+opt-level = "z"
+lto = true
+debug = false
+panic = "abort"
+overflow-checks = true
