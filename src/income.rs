@@ -175,7 +175,10 @@ impl Vault {
 
         self.reserve -= amount;
         self.last_accounted -= amount;
-        env::log_str(&format!("draw_reserve: {} to {} for {}", amount, to, reason));
+        env::log_str(&format!(
+            "draw_reserve: {} to {} for {}",
+            amount, to, reason
+        ));
         self.pay(to, amount, PayKind::Reserve)
     }
 

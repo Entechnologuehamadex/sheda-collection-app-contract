@@ -123,7 +123,12 @@ impl Vault {
             ext_nft::ext(self.marketplace.clone())
                 .with_attached_deposit(ONE_YOCTO)
                 .with_static_gas(GAS_FOR_NFT_TRANSFER)
-                .nft_transfer(to.clone(), token_id.clone(), None, Some("vault redemption".to_string()))
+                .nft_transfer(
+                    to.clone(),
+                    token_id.clone(),
+                    None,
+                    Some("vault redemption".to_string()),
+                )
                 .then(
                     ext_self::ext(env::current_account_id())
                         .with_static_gas(GAS_FOR_SENT_CB)
