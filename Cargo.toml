@@ -9,10 +9,14 @@ description = "Fractional ownership of a single property unit, with rent split a
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-near-sdk = "5.5.0"
+# `legacy` carries near_sdk::collections. The newer `store` collections buffer
+# writes and hand back references rather than values, which changes every call
+# site here; this crate uses the stable ones deliberately and can migrate as
+# its own change rather than as a side effect of a version bump.
+near-sdk = { version = "5.5", features = ["legacy"] }
 
 [dev-dependencies]
-near-sdk = { version = "5.5.0", features = ["unit-testing"] }
+near-sdk = { version = "5.5", features = ["legacy", "unit-testing"] }
 
 [profile.release]
 codegen-units = 1
