@@ -19,7 +19,7 @@ impl Vault {
     /// Take custody of the unit.
     ///
     /// NEP-171 calls this on the receiver when an NFT arrives by
-    /// `nft_transfer_call`, so the vault is told — unlike money, which
+    /// `nft_transfer_call`, so the vault is told, unlike money, which
     /// arrives silently. Returning "0" keeps the token; anything else hands
     /// it back, which is what every rejection below does.
     pub fn nft_on_transfer(

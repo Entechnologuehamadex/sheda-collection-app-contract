@@ -96,7 +96,7 @@ fn a_second_raise_fits_inside_what_is_left() {
 
 #[test]
 fn slashing_one_project_leaves_the_other_untouched() {
-    // R10. The cap on a slash is not a safety margin — it is the whole
+    // R10. The cap on a slash is not a safety margin. It is the whole
     // mechanism stopping one failure cascading into every open raise.
     let mut reg = registry();
     deposit(&mut reg, "builder.testnet", 10_000_000);

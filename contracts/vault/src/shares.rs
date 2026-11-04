@@ -2,8 +2,9 @@
 //!
 //! The whole of the care in this file is one rule. A balance may not move
 //! until both sides have been settled against the accumulator. Miss it and
-//! someone who buys shares on Monday collects rent that accrued in March —
-//! a silent bug, favouring whoever trades most, found by the person it robbed.
+//! someone who buys shares on Monday collects rent that accrued in March:
+//! a silent bug, favouring whoever trades most, found by the person it
+//! robbed.
 
 use crate::{Vault, VaultExt, BPS, PRECISION};
 use near_sdk::json_types::U128;
@@ -96,7 +97,7 @@ impl Vault {
 #[near]
 impl Vault {
     /// Issue shares. Only before the supply is frozen, which happens when the
-    /// raise that funded this unit closes — after that no share may ever be
+    /// raise that funded this unit closes. After that no share may ever be
     /// created, so nobody can be diluted by the party who sold to them.
     #[payable]
     pub fn mint_shares(&mut self, to: AccountId, amount: U128) {

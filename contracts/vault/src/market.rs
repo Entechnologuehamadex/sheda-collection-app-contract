@@ -29,7 +29,7 @@ impl Vault {
     ///
     /// `is_for_sale` is false without exception. Selling the unit ends the
     /// investment for every holder, so it goes through governance and its
-    /// 75% threshold — never through the manager, whose mandate is to let
+    /// 75% threshold, never through the manager, whose mandate is to let
     /// the flat, not to dispose of it.
     #[payable]
     pub fn list_for_rent(
@@ -75,7 +75,7 @@ impl Vault {
     ///
     /// Rent lands in this vault as a result, silently, because the
     /// marketplace pays with plain `ft_transfer`. Call `sync_income`
-    /// afterwards — or let anyone else do it, which is the point of leaving
+    /// afterwards, or let anyone else do it, which is the point of leaving
     /// that method open.
     #[payable]
     pub fn accept_bid(&mut self, bid_id: U128) -> Promise {

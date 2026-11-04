@@ -7,7 +7,7 @@
 //!
 //! One accounting rule carries most of the weight. A builder with ten
 //! million staked who opens three raises, each advertising eighteen percent
-//! cover, has promised the same ten million three times — and every investor
+//! cover, has promised the same ten million three times, and every investor
 //! sees a figure that is only true if the other two projects succeed. So the
 //! balance is split three ways: what is held, what is already spoken for,
 //! and what is left. A raise cannot advertise cover the free balance does
@@ -247,7 +247,7 @@ impl StakeRegistry {
     /// Take stake for a failure, and send it where the controller says.
     ///
     /// Only ever out of this project's own allocation. The cap is not a
-    /// safety margin — it is the whole mechanism by which one project's
+    /// safety margin. It is the whole mechanism by which one project's
     /// failure cannot reach cover promised to investors in another.
     pub fn slash(
         &mut self,

@@ -31,7 +31,7 @@ ten identical claims, and the point is that those claims divide again, add
 together, and sell in part. That is a fungible token.
 
 Numbered sub-NFTs would mean writing division, merging and partial transfer by
-hand — every one of them a place to get arithmetic wrong with other people's
+hand, every one of them a place to get arithmetic wrong with other people's
 money. So the unit stays an NFT, because a flat is a specific flat, and the
 claims on it are fungible, because a tenth of the rent is a tenth of the rent.
 
@@ -64,7 +64,7 @@ repeated small payments lose nothing.
 ## Rent arrives silently
 
 The deployed marketplace pays landlords with plain `ft_transfer`. This was
-checked rather than assumed — reading the bytecode of
+checked rather than assumed. Reading the bytecode of
 `market.shedauser.testnet` over RPC shows the literals:
 
 ```
@@ -117,7 +117,7 @@ Stake belongs to a profile, not to a deal, so a builder who abandons one
 project finds it harder to raise for the next.
 
 The accounting is the point. A builder with ₦10m staked who opens three
-raises, each advertising 18% cover, has promised the same ₦10m three times —
+raises, each advertising 18% cover, has promised the same ₦10m three times,
 and every investor sees a figure that is only true if the other two succeed.
 So a balance is **total**, **allocated** and **free**, and a raise cannot
 advertise cover the free balance does not support.
@@ -134,22 +134,22 @@ would actually pay.
 
 **Anyone**
 
-- `sync_income()` — credit whatever has arrived
+- `sync_income()`: credit whatever has arrived
 - `ft_balance_of`, `ft_total_supply`, `ft_metadata`, `ownership_bps`
-- `claimable(account_id)` — settled plus accrued, right now
+- `claimable(account_id)`: settled plus accrued, right now
 - `get_info()`, `get_reserve()`, `withdraw_treasury_fee()`
 
 **Holders** (1 yocto)
 
 - `ft_transfer(receiver_id, amount, memo)`
 - `claim()`
-- `redeem()` — only with every share, and only when the flat is not let
+- `redeem()`: only with every share, and only when the flat is not let
 
 **Manager** (1 yocto)
 
 - `list_for_rent(price, lease_duration_days)`, `delist()`
 - `accept_bid(bid_id)`, `reject_bid(bid_id)`
-- `release_documents(bid_id, uri, description)` — forwards to the marketplace's `confirm_document_release`
+- `release_documents(bid_id, uri, description)`: forwards to the marketplace's `confirm_document_release`
 - `draw_reserve(amount, to, reason)`
 - `withdraw_manager_fee()`
 
@@ -163,7 +163,7 @@ would actually pay.
 - Fees together may never exceed **30%** of rent. A vault where configuration
   could leave holders with nothing is one where it eventually will.
 - Supply freezes permanently at the close of the raise. No mint path survives
-  it, for anyone — dilution after people have bought is indistinguishable
+  it, for anyone. Dilution after people have bought is indistinguishable
   from theft.
 - A unit is only accepted from its own marketplace, and only if its token id
   matches the property this vault was created for.
@@ -189,7 +189,7 @@ transfer in both directions, rounding conservation across a hundred
 payments, the fee split reconstructing the whole, the fee ceiling, the supply
 freeze, and a thousand-holder reconciliation.
 
-What they do not cover is anything crossing contracts — `sync_income`,
+What they do not cover is anything crossing contracts: `sync_income`,
 `claim`, `redeem` and the marketplace forwarders all need a sandbox. Those
 tests come with stage 2's integration gate, against a real deployed
 marketplace.

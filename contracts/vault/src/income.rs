@@ -1,9 +1,10 @@
 //! Rent arriving, and rent leaving.
 //!
-//! Nobody is paid when rent arrives. The obvious implementation — loop over
-//! the holders and pay each — stops working past a few dozen of them, because
-//! a transaction has a gas ceiling and the loop eventually does not fit
-//! inside it. It would pass every test and fail once the product succeeded.
+//! Nobody is paid when rent arrives. The obvious implementation, looping
+//! over the holders and paying each, stops working past a few dozen of them,
+//! because a transaction has a gas ceiling and the loop eventually does not
+//! fit inside it. It would pass every test and fail once the product
+//! succeeded.
 //!
 //! So one number moves instead. `acc_per_share` records rent per share over
 //! all time, and a holder works out their own entitlement from it when they
@@ -197,8 +198,8 @@ impl Vault {
     /// Put the money back if the transfer failed.
     ///
     /// Without this a failed payout leaves the holder's entitlement erased
-    /// and the tokens still sitting in the vault — the one outcome worse than
-    /// the payout simply not happening.
+    /// and the tokens still sitting in the vault. That is the one outcome
+    /// worse than the payout simply not happening.
     #[private]
     pub fn on_paid(
         &mut self,

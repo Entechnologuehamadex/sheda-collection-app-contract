@@ -40,7 +40,7 @@ pub trait NonFungibleToken {
 /// read off `market.shedauser.testnet` rather than from memory. That mattered:
 /// `update_listing` takes a fifth argument this originally omitted, and the
 /// document call is named `confirm_document_release`, not `release_documents`.
-/// Both would have compiled perfectly and failed at runtime — the first on
+/// Both would have compiled perfectly and failed at runtime: the first on
 /// deserialisation, the second on a method that does not exist.
 ///
 /// If the marketplace is ever redeployed, re-read the ABI before trusting

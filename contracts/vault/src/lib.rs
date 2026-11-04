@@ -8,7 +8,7 @@
 //!
 //! What it adds is the split. Shares in the vault are a fungible token; rent
 //! arriving is divided among whoever holds them, in proportion and in
-//! arrears. Nobody is paid when rent arrives — see `income.rs` for why that
+//! arrears. Nobody is paid when rent arrives; see `income.rs` for why that
 //! matters more than it sounds.
 
 use near_sdk::borsh::{BorshDeserialize, BorshSerialize};
@@ -208,7 +208,7 @@ impl Vault {
     // ---- governance -----------------------------------------------------
 
     /// Replace the manager. Any income already earned stays owed to the
-    /// outgoing manager — removing someone does not cancel what they are due
+    /// outgoing manager. Removing someone does not cancel what they are due
     /// for work already done.
     #[payable]
     pub fn set_manager(&mut self, manager: AccountId) {

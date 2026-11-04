@@ -115,7 +115,7 @@ fn rounding_never_pays_out_more_than_came_in() {
     // remainder forward, but each holder's own division still truncates, and
     // that last fraction stays in the vault.
     //
-    // So the invariant is not exact conservation — it is that the vault can
+    // So the invariant is not exact conservation. It is that the vault can
     // never owe more than it received, and that the shortfall stays bounded
     // instead of growing with the number of payments. A naive accumulator
     // that dropped its remainder would lose up to one unit *per payment*;
@@ -224,7 +224,7 @@ fn claiming_is_not_double_counted() {
 #[test]
 fn a_thousand_holders_still_reconcile() {
     // R5. The point is less the assertion than that crediting income does no
-    // work per holder at all — this runs in constant time regardless.
+    // work per holder at all: this runs in constant time regardless.
     let mut v = vault();
     for i in 0..1_000u32 {
         let who: AccountId = format!("h{}.testnet", i).parse().unwrap();
