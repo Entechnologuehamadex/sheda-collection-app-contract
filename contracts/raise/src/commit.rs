@@ -121,7 +121,7 @@ impl Raise {
             if fee > 0 {
                 project.fee_taken = fee;
                 self.save(&project_id, &project);
-                ext_ft::ext(project.stablecoin.clone())
+                let _ = ext_ft::ext(project.stablecoin.clone())
                     .with_attached_deposit(ONE_YOCTO)
                     .with_static_gas(GAS_FOR_FT_TRANSFER)
                     .ft_transfer(

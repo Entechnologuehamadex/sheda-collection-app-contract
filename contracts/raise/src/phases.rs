@@ -12,7 +12,7 @@
 
 use crate::ext::{ext_ft, ext_self};
 use crate::{
-    assert_one_yocto, Phase, PhaseState, Raise, RaiseExt, RaiseStatus, BPS, GAS_FOR_FT_TRANSFER,
+    assert_one_yocto, Phase, PhaseState, Raise, RaiseExt, RaiseStatus, GAS_FOR_FT_TRANSFER,
     GAS_FOR_RESOLVE, OBJECTION_THRESHOLD_BPS, OBJECTION_WINDOW_NS, ONE_YOCTO,
 };
 use near_sdk::json_types::U128;
@@ -152,11 +152,7 @@ impl Raise {
             "Holders still have time to object to this phase"
         );
 
-        let objected_bps = if project.raised == 0 {
-            0
-        } else {
-            ((current.objection_amount * BPS) / project.raised).min(BPS) as u32
-        };
+        let objected_bps = project.objection_bps(current.objection_amount);
 
         if objected_bps >= OBJECTION_THRESHOLD_BPS {
             project.phases[index].state = PhaseState::Held;

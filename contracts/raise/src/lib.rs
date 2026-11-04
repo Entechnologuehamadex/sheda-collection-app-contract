@@ -183,6 +183,19 @@ impl Project {
         nominal.min(pot.saturating_sub(self.released))
     }
 
+    /// Share of the raise that has objected, in basis points.
+    ///
+    /// Defined once because the view a holder reads before objecting and
+    /// the check that settles the phase have to be the same number. Two
+    /// copies of the rule that decides whether money moves is one too
+    /// many.
+    pub fn objection_bps(&self, objection_amount: u128) -> u32 {
+        (objection_amount * BPS)
+            .checked_div(self.raised)
+            .map(|share| share.min(BPS) as u32)
+            .unwrap_or(0)
+    }
+
     pub fn is_live(&self) -> bool {
         matches!(self.status, RaiseStatus::Open | RaiseStatus::Funded)
     }
@@ -385,10 +398,7 @@ impl Raise {
         let Some(p) = project.phases.get(phase as usize) else {
             return 0;
         };
-        if project.raised == 0 {
-            return 0;
-        }
-        ((p.objection_amount * BPS) / project.raised).min(BPS) as u32
+        project.objection_bps(p.objection_amount)
     }
 
     pub fn has_objected(&self, project_id: String, phase: u32, account_id: AccountId) -> bool {

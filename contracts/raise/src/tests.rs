@@ -502,7 +502,7 @@ fn there_is_no_refund_from_a_funded_raise() {
     let mut r = raise();
     fund(&mut r);
     ctx("ada.testnet", 1, DAY + 3);
-    r.refund("m120".into());
+    let _ = r.refund("m120".into());
 }
 
 #[test]
