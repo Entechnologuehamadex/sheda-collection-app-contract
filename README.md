@@ -194,6 +194,30 @@ What they do not cover is anything crossing contracts: `sync_income`,
 tests come with stage 2's integration gate, against a real deployed
 marketplace.
 
+## Deployed
+
+Testnet, built by CI and deployed from that wasm. Nothing is on mainnet and
+nothing should be: none of this has been audited.
+
+| Contract | Account | Code hash |
+| --- | --- | --- |
+| Raise | `sheda-raise-v1.testnet` | `6XiSfG7MHr2LyruXZ726rvPwAeBVSYpJktUUwtHkcHjX` |
+| Stake registry | `sheda-stake-v1.testnet` | `C12mXsaX8QJxvunrRERKr16fFfFiL2yAbeUKzWLZrTpg` |
+
+The registry's controller is the raise contract. That is the whole of the
+authority to touch a builder's stake: a stalled project can slash the cover
+allocated to it, and nothing else can reach it at all.
+
+Both accounts are their own owner on testnet, which is fine for a throwaway
+and is not how this should be set up anywhere real. Versioned names rather
+than plain ones, so a change that breaks the stored state goes to v2 instead
+of needing a migration written for data nobody minds losing.
+
+The wasm comes out of CI because this is the only machine in the loop with a
+toolchain that can link one. `cargo build --target wasm32-unknown-unknown`
+still needs a host linker for the proc-macro crates, so a laptop without
+build tools cannot produce these binaries however the target is set.
+
 ## What the Sheda app binds to
 
 Collections now ships inside the main Sheda app, which reads these
