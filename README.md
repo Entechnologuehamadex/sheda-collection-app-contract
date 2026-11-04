@@ -194,6 +194,53 @@ What they do not cover is anything crossing contracts — `sync_income`,
 tests come with stage 2's integration gate, against a real deployed
 marketplace.
 
+## What the Sheda app binds to
+
+Collections now ships inside the main Sheda app, which reads these
+contracts directly over RPC and signs against them with the user's own
+wallet. That makes the following a published interface rather than an
+internal one: renaming any of it breaks a deployed app, and the two live in
+separate repositories so the compiler will not say so.
+
+The app calls exactly these, and nothing else.
+
+**Vault**, per unit, at an account id the app is told at runtime.
+
+| Method | Shape the app expects |
+| --- | --- |
+| `get_info()` | `VaultInfo`. Every `U128` and the `U64` property id arrive as JSON strings and are parsed as BigInt. |
+| `ft_balance_of(account_id)` | `U128` |
+| `claimable(account_id)` | `U128`, settled plus accrued |
+| `claim()` | 1 yocto |
+| `sync_income()` | no deposit, callable by anyone |
+| `ft_transfer(receiver_id, amount, memo)` | 1 yocto |
+
+**Stake registry**, one account for the platform.
+
+| Method | Shape the app expects |
+| --- | --- |
+| `get_profile(account_id)` | `ProfileView` with `total`, `allocated`, `free`, `slashed_total`, `slash_count` |
+| `cover_bps(project_id, account_id, target)` | `u32` basis points |
+| `withdraw(amount)` | 1 yocto |
+| `ft_on_transfer(...)` | reached by `ft_transfer_call` on the stablecoin, `msg` empty to credit the sender |
+
+Two things about that table are load bearing.
+
+**Amounts stay strings the whole way.** A JSON number is a double and exact
+only to 2^53. A unit price sits below that, but `acc_per_share` is scaled by
+1e18 and passes 1e25 in ordinary use, and a holder's owed figure is
+`balance * acc_per_share` before it is divided back down. The app never
+parses an amount into a number.
+
+**The app reproduces `claimable` locally for display and never for a
+payout.** It can show an accrued figure between syncs, but income credited
+since the last read exists only here, so anything about to move money reads
+this view first.
+
+Deployment ids go in the app's `config/collections.ts`. An empty id there
+means that part of Collections is not live, which the screens say plainly
+rather than treating as an error, so the two contracts can ship separately.
+
 ## Not here yet
 
 Raise and escrow, governance and voting, and the share market. They are stages 3 to 6 of the spec. This
