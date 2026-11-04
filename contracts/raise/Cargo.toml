@@ -1,0 +1,15 @@
+[package]
+name = "sheda-collection-raise"
+description = "Escrow, phase releases and refunds for a fractional property raise."
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+near-sdk.workspace = true
+
+[dev-dependencies]
+near-sdk = { workspace = true, features = ["unit-testing"] }

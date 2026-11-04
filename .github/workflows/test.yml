@@ -44,3 +44,14 @@ jobs:
 
       - name: Report size
         run: ls -lh target/wasm32-unknown-unknown/release/*.wasm
+
+      # The binaries leave the runner, because this is the only machine in
+      # the loop with a Rust toolchain that can link. Deploying otherwise
+      # means trusting a wasm built somewhere nobody can see.
+      - name: Keep the wasm
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasm
+          path: target/wasm32-unknown-unknown/release/*.wasm
+          if-no-files-found: error
+          retention-days: 30
